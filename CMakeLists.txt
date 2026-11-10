@@ -109,6 +109,8 @@ if(PULP_BUILD_APP)
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:pulp_app>" "${CMAKE_SOURCE_DIR}/dist/PULP/PULP.exe"
     COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:pulp_render>" "${CMAKE_SOURCE_DIR}/dist/PULP/pulp_render.exe"
     COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different "${CMAKE_SOURCE_DIR}/factory" "${CMAKE_SOURCE_DIR}/dist/PULP/factory"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_SOURCE_DIR}/dist/PULP/Plugins"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/tools/Plugins-README.txt" "${CMAKE_SOURCE_DIR}/dist/PULP/Plugins/README.txt"
     DEPENDS pulp_app pulp_render factory
     COMMENT "Copying PULP into dist/PULP")
 endif()

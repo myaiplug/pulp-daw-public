@@ -83,7 +83,9 @@ public:
     void endReuse();
 
     // Scanning. Each file is examined by a child process (this program run with --scan-vst3).
-    juce::StringArray defaultFiles() const;         // every .vst3 in the usual folders and the folders that were added
+    juce::StringArray defaultFiles() const;         // every .vst3 in the usual folders, the bundled folder and the folders that were added
+    static juce::File bundledFolder();              // "Plugins" next to PULP.exe: plugins that ship with this copy of PULP
+    void scanBundled();                             // at start: looks at bundled plugins that are not on the list yet (in the background)
     void scan(const juce::StringArray& files, bool rescanKnown, std::function<void(const juce::String&)> progress,
               std::function<void(int found, int failed)> done);
     bool scanning() const { return scanThread_ != nullptr && scanThread_->isThreadRunning(); }

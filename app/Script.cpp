@@ -348,6 +348,12 @@ bool ScriptRunner::run(const juce::String& line) {
         });
         if (!PluginHost::get().scanning()) { scriptBusy_ = false; fail("the scan did not start"); }
     }
+    else if (cmd == "vstwait") { if (PluginHost::get().scanning()) { --next_; startTimer(50); return false; } }      // waits for a scan (the bundled plugins' at start) to finish
+    else if (cmd == "vstopen" && args.size() >= 3) {        // vstopen <track> <slot>: the plugin's own window, as a double-click on the slot does
+        auto p = s.project.mixer[(size_t)juce::jlimit(0, pulp::kNumMixerTracks - 1, args[1].getIntValue())].slots[juce::jlimit(0, pulp::kNumSlots - 1, args[2].getIntValue())];
+        if (!PluginHost::isHosted(p.get())) fail("no hosted plugin there");
+        else main_.openEffect(p, juce::String(p->displayName()));
+    }
     else if (cmd == "vstlist") {
         juce::String out = "vst plugins:";
         for (auto& e : PluginHost::get().plugins()) out << "\n  " << e.name << " | " << e.maker << " | " << (e.instrument ? "instrument" : "effect");

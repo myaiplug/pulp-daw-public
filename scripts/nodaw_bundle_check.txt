@@ -1,0 +1,20 @@
+# Bundled plugins: the first run finds NoDAW Screw in dist/PULP/Plugins, loads it as an effect,
+# processes audio through it and opens its window (WebView2).
+wait 500
+vstwait
+vstlist
+new demo
+vstfx 1 0 Screw
+vstinfo 1 0
+play
+wait 3000
+stop
+vstopen 1 0
+wait 6000
+vstwin
+vstshot ../out/bundle/screw-window.png
+show mixer
+move mixer 40 60 1400 700
+wait 400
+shot main ../out/bundle/mixer-with-screw.png
+quit

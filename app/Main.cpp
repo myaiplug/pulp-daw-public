@@ -81,6 +81,7 @@ public:
 
         juce::LookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
         PluginHost::get().start();
+        PluginHost::get().scanBundled();
         session = std::make_unique<Session>();
         session->newDefaultProject();
         session->beginRunLock();

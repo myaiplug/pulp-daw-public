@@ -549,9 +549,30 @@ std::shared_ptr<pulp::Plugin> PluginHost::create(const std::string& typeId) {
     return std::make_shared<HostedPlugin>(std::move(instance), *desc, typeId);
 }
 
+juce::File PluginHost::bundledFolder() {
+    return juce::File::getSpecialLocation(juce::File::currentExecutableFile).getParentDirectory().getChildFile("Plugins");
+}
+
+// Plugins that ship next to PULP.exe are found on the first run without a FIND PLUGINS click. They are
+// separate programs loaded at run time, examined by a child process like any other plugin.
+void PluginHost::scanBundled() {
+    if (!j_ || scanning() || !bundledFolder().isDirectory()) return;
+    juce::VST3PluginFormat format;
+    juce::FileSearchPath path;
+    path.add(bundledFolder());
+    juce::StringArray todo;
+    for (auto& f : format.searchPathsForPlugins(path, true, false)) {
+        bool known = blacklist_.contains(f);
+        for (auto& d : j_->known.getTypes()) known = known || d.fileOrIdentifier == f;
+        if (!known) todo.add(f);
+    }
+    if (!todo.isEmpty()) scan(todo, false, nullptr, nullptr);
+}
+
 juce::StringArray PluginHost::defaultFiles() const {
     juce::VST3PluginFormat format;
     auto paths = format.getDefaultLocationsToSearch();
+    if (bundledFolder().isDirectory()) paths.addIfNotAlreadyThere(bundledFolder());
     for (auto& f : folders) paths.addIfNotAlreadyThere(juce::File(f));
     return format.searchPathsForPlugins(paths, true, false);
 }
