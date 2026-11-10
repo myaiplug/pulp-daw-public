@@ -291,8 +291,8 @@ public:
             editor_.reset(hp->instance().hasEditor() ? hp->instance().createEditorIfNeeded() : nullptr);
             if (editor_ == nullptr) editor_ = std::make_unique<juce::GenericAudioProcessorEditor>(hp->instance());
             addAndMakeVisible(*editor_);
-            touched_.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff3d4349));
-            params_.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff3d4349));
+            touched_.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff1f2229));
+            params_.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff1f2229));
             touched_.setButtonText("Move a control, then click here to automate it");
             touched_.setTooltip("The control you moved last in this plugin. Click for its menu: create an automation clip, link it to a controller, edit its events.");
             params_.setButtonText("PARAMETERS");
@@ -310,7 +310,7 @@ public:
             stopTimer();
             editor_.reset();
         }
-        void paint(juce::Graphics& g) override { g.fillAll(juce::Colour(0xff2b2f34)); }
+        void paint(juce::Graphics& g) override { g.fillAll(juce::Colour(0xff15171c)); }
         void resized() override {
             auto strip = getLocalBounds().removeFromTop(kStrip).reduced(3, 3);
             params_.setBounds(strip.removeFromRight(104));
@@ -346,7 +346,7 @@ public:
     };
 
     Window(PluginHost& host, std::shared_ptr<pulp::Plugin> plugin, const juce::String& title)
-        : juce::DocumentWindow(title, juce::Colour(0xff2b2f34), juce::DocumentWindow::closeButton), host_(host) {
+        : juce::DocumentWindow(title, juce::Colour(0xff15171c), juce::DocumentWindow::closeButton), host_(host) {
         setUsingNativeTitleBar(true);
         content_ = new Content(host, std::move(plugin));
         setContentOwned(content_, true);

@@ -163,10 +163,10 @@ void KeyboardStrip::paint(juce::Graphics& g) {
     for (int k = lowKey; k < lowKey + numKeys; ++k) {
         if (isBlack(k)) continue;
         const juce::Rectangle<float> r(wi * ww, 0.0f, ww - 1.0f, h);
-        g.setColour(k == down_ ? theme::accent : juce::Colour(0xffd4d8dc));
+        g.setColour(k == down_ ? theme::accent : juce::Colour(0xffe9e4da));
         g.fillRect(r);
         if (k % 12 == 0) {
-            g.setColour(juce::Colour(0xff50565c));
+            g.setColour(juce::Colour(0xff3a3e45));
             g.setFont(theme::font(9.0f));
             g.drawText(keyName(k), r.withTrimmedTop(h - 12.0f), juce::Justification::centred, false);
         }
@@ -176,7 +176,7 @@ void KeyboardStrip::paint(juce::Graphics& g) {
     for (int k = lowKey; k < lowKey + numKeys; ++k) {
         if (!isBlack(k)) { ++wi; continue; }
         const juce::Rectangle<float> r(wi * ww - ww * 0.32f, 0.0f, ww * 0.64f, h * 0.6f);
-        g.setColour(k == down_ ? theme::accent : juce::Colour(0xff1c1f22));
+        g.setColour(k == down_ ? theme::accent : juce::Colour(0xff0d0e11));
         g.fillRect(r);
     }
 }

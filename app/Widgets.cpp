@@ -99,22 +99,32 @@ void ParamKnob::paint(juce::Graphics& g) {
     juce::Path track;
     track.addCentredArc(cx, cy, rad - 1.5f, rad - 1.5f, 0.0f, a0, a1, true);
     g.setColour(theme::inset);
-    g.strokePath(track, juce::PathStrokeType(2.4f));
+    g.strokePath(track, juce::PathStrokeType(2.6f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
     juce::Path val;
     const float from = bipolar ? (a0 + a1) * 0.5f : a0;
     val.addCentredArc(cx, cy, rad - 1.5f, rad - 1.5f, 0.0f, juce::jmin(from, a), juce::jmax(from, a), true);
-    g.setColour(isEnabled() ? colour : theme::textDim);
-    g.strokePath(val, juce::PathStrokeType(2.4f));
+    const auto arc = isEnabled() ? colour : theme::textDim;
+    if (isEnabled() && std::abs(a - from) > 0.01f) theme::glow(g, val, arc, 2.4f);
+    g.setColour(arc);
+    g.strokePath(val, juce::PathStrokeType(2.4f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
+    // machined body: soft drop shadow, radial gradient, hairline rim and a lit upper edge
     const float body = rad - 4.0f;
-    g.setColour(theme::panelHi.brighter(dragging_ ? 0.15f : 0.0f));
+    g.setColour(juce::Colours::black.withAlpha(0.45f));
+    g.fillEllipse(cx - body, cy - body + 1.5f, body * 2.0f, body * 2.0f);
+    const auto top = theme::panelHi.brighter(dragging_ ? 0.30f : 0.18f), low = theme::panelLo;
+    g.setGradientFill(juce::ColourGradient(top, cx - body * 0.4f, cy - body * 0.8f, low, cx + body * 0.5f, cy + body, true));
     g.fillEllipse(cx - body, cy - body, body * 2.0f, body * 2.0f);
-    g.setColour(theme::line);
+    g.setColour(juce::Colours::black.withAlpha(0.6f));
     g.drawEllipse(cx - body, cy - body, body * 2.0f, body * 2.0f, 1.0f);
+    juce::Path rim;
+    rim.addCentredArc(cx, cy, body - 1.0f, body - 1.0f, 0.0f, -0.9f, 0.9f, true);
+    g.setColour(juce::Colours::white.withAlpha(0.10f));
+    g.strokePath(rim, juce::PathStrokeType(1.0f));
+    const float px = cx + std::sin(a) * body * 0.78f, py = cy - std::cos(a) * body * 0.78f;
+    const float qx = cx + std::sin(a) * body * 0.30f, qy = cy - std::cos(a) * body * 0.30f;
     g.setColour(theme::text);
-    const float px = cx + std::sin(a) * body * 0.85f, py = cy - std::cos(a) * body * 0.85f;
-    const float qx = cx + std::sin(a) * body * 0.25f, qy = cy - std::cos(a) * body * 0.25f;
-    g.drawLine(qx, qy, px, py, 1.6f);
+    g.drawLine(qx, qy, px, py, 1.8f);
 }
 
 void ParamKnob::setValueNorm(float n, bool endGesture) {
@@ -248,7 +258,13 @@ void NumberBox::mouseWheelMove(const juce::MouseEvent& e, const juce::MouseWheel
 
 void IconButton::paint(juce::Graphics& g) {
     auto r = getLocalBounds().toFloat().reduced(1.0f);
-    theme::bevel(g, r, over_ ? theme::panelHi.brighter(0.08f) : theme::panelHi);
+    theme::bevel(g, r, over_ ? theme::panelHi.brighter(0.10f) : theme::panelHi, 5.0f);
+    if (lit) {
+        g.setColour(litColour.withAlpha(0.12f));
+        g.fillRoundedRectangle(r.reduced(1.0f), 4.0f);
+        g.setColour(litColour.withAlpha(0.45f));
+        g.drawRoundedRectangle(r.reduced(0.5f), 5.0f, 1.0f);
+    }
     const auto c = lit ? litColour : theme::text.withAlpha(isEnabled() ? 0.85f : 0.3f);
     g.setColour(c);
     auto i = r.reduced(r.getHeight() * 0.28f);

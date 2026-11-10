@@ -187,7 +187,7 @@ void Playlist::paintGrid(juce::Graphics& g) {
         if (trackHeight(t) <= 0) continue;
         const float y = yOfTrack(t);
         const auto& tr = s_.project.tracks[(size_t)t];
-        g.setColour(t % 2 == 0 ? juce::Colour(0xff2b3035) : juce::Colour(0xff282c31));
+        g.setColour(t % 2 == 0 ? juce::Colour(0xff14161a) : juce::Colour(0xff111317));
         g.fillRect((float)a.getX(), y, (float)a.getWidth(), (float)trackHeight(t));
         if (!s_.project.trackAudible(t)) { g.setColour(juce::Colours::black.withAlpha(0.28f)); g.fillRect((float)a.getX(), y, (float)a.getWidth(), (float)trackHeight(t)); }
         if (tr.locked) { g.setColour(theme::warn.withAlpha(0.05f)); g.fillRect((float)a.getX(), y, (float)a.getWidth(), (float)trackHeight(t)); }
@@ -201,7 +201,7 @@ void Playlist::paintGrid(juce::Graphics& g) {
     for (int t = juce::jmax(0, t0); t <= t1; t += fine) {
         const bool isBar = t % bar == 0, isBeat = t % beat == 0;
         if (!isBar && bar * pxPerTick_ < 30.0) continue;
-        g.setColour(isBar ? juce::Colour(0xff101214) : (isBeat ? juce::Colour(0xff1c1f22) : juce::Colour(0xff23272b)));
+        g.setColour(isBar ? juce::Colour(0xff040506) : (isBeat ? juce::Colour(0xff0d0e11) : juce::Colour(0xff0c0d10)));
         g.drawVerticalLine((int)xOfTick(t), (float)a.getY(), (float)a.getBottom());
     }
     if (s_.project.loopEnd > s_.project.loopStart) {
@@ -223,7 +223,7 @@ void Playlist::paintClips(juce::Graphics& g) {
         if (c.type == Clip::AudioClip) {
             // an audio clip: the part of the file it plays, drawn as a waveform
             const auto* a = s_.project.audioById(c.audioId);
-            const juce::Colour col = c.muted ? juce::Colour(0xff555b62) : juce::Colour(0xff3f8f86);
+            const juce::Colour col = c.muted ? juce::Colour(0xff3a3e45) : juce::Colour(0xff4fa79c);
             g.setColour(col.withMultipliedBrightness(c.selected ? 1.2f : 0.8f));
             g.fillRoundedRectangle(r, 3.0f);
             if (a && a->valid() && r.getHeight() > 16.0f) {
@@ -265,7 +265,7 @@ void Playlist::paintClips(juce::Graphics& g) {
         }
         const auto* pat = s_.project.patternById(c.patternId);
         juce::Colour col = pat ? juce::Colour(pat->color) : theme::textDim;
-        if (c.muted) col = juce::Colour(0xff555b62);
+        if (c.muted) col = juce::Colour(0xff3a3e45);
         g.setColour(col.withMultipliedBrightness(c.selected ? 1.15f : 0.75f));
         g.fillRoundedRectangle(r, 3.0f);
         // mini preview of the pattern's notes inside the clip
@@ -311,7 +311,7 @@ void Playlist::paintClips(juce::Graphics& g) {
 // An automation clip: its curve, the points you drag and the small rings that bend the stretch between two points.
 void Playlist::paintAutoClip(juce::Graphics& g, const Clip& c, juce::Rectangle<float> r, juce::Rectangle<float> vis) {
     const auto* a = s_.project.autoById(c.autoId);
-    const juce::Colour col = c.muted ? juce::Colour(0xff555b62) : juce::Colour(a ? a->color : 0xff9a6fb0);
+    const juce::Colour col = c.muted ? juce::Colour(0xff3a3e45) : juce::Colour(a ? a->color : 0xff9a6fb0);
     g.setColour(col.withMultipliedBrightness(c.selected ? 0.7f : 0.45f));
     g.fillRoundedRectangle(r, 3.0f);
     if (a && r.getHeight() > 18.0f) {
@@ -517,7 +517,7 @@ void Playlist::paintPicker(juce::Graphics& g) {
             if (y >= a.getBottom()) break;
             const juce::Rectangle<int> r(a.getX() + 3, y, a.getWidth() - 7, 19);
             pickerRows_.push_back({r, 1, au.id});
-            g.setColour(juce::Colour(0xff3f8f86).withMultipliedBrightness(au.id == drawAudioId_ ? 1.2f : 0.6f));
+            g.setColour(juce::Colour(0xff4fa79c).withMultipliedBrightness(au.id == drawAudioId_ ? 1.2f : 0.6f));
             g.fillRoundedRectangle(r.toFloat(), 2.5f);
             g.setColour(au.id == drawAudioId_ ? juce::Colours::white : theme::text);
             g.drawText(juce::String(au.name), r.reduced(5, 0), juce::Justification::centredLeft, true);

@@ -327,13 +327,25 @@ void Toolbar::resized() {
 }
 
 void Toolbar::paint(juce::Graphics& g) {
-    g.fillAll(theme::panel);
-    g.setColour(theme::line);
+    g.setGradientFill(juce::ColourGradient(theme::panelHi, 0.0f, 0.0f, theme::panelLo, 0.0f, (float)getHeight(), false));
+    g.fillAll();
+    g.setColour(theme::sheen);
+    g.drawHorizontalLine(0, 0.0f, (float)getWidth());
+    g.setColour(juce::Colours::black);
     g.drawHorizontalLine(getHeight() - 1, 0.0f, (float)getWidth());
+    {
+        juce::ColourGradient rule(theme::accent.withAlpha(0.0f), 0.0f, 0.0f, theme::accent.withAlpha(0.0f), (float)getWidth(), 0.0f, false);
+        rule.addColour(0.25, theme::accent.withAlpha(0.35f));
+        rule.addColour(0.75, theme::accent.withAlpha(0.35f));
+        g.setGradientFill(rule);
+        g.fillRect(0, getHeight() - 2, getWidth(), 1);
+    }
 
-    g.setColour(theme::accent);
-    g.setFont(theme::font(22.0f, true));
-    g.drawText("PULP", brandArea_, juce::Justification::centredLeft, false);
+    // wordmark: PULP in a champagne-gold gradient
+    auto brand = brandArea_.toFloat();
+    g.setGradientFill(juce::ColourGradient(theme::accent.brighter(0.4f), brand.getX(), brand.getY() + 3.0f, theme::accent.darker(0.3f), brand.getX(), brand.getBottom() - 2.0f, false));
+    g.setFont(theme::font(21.0f, true).withExtraKerningFactor(0.10f));
+    g.drawText("PULP", brand.withTrimmedLeft(2.0f), juce::Justification::centredLeft, false);
 
     theme::insetBox(g, hintArea_.toFloat());
     g.setColour(theme::text);

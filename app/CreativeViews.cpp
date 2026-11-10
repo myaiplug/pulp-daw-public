@@ -167,7 +167,7 @@ void PlatterView::paint(juce::Graphics& g) {
     const auto a = getLocalBounds().toFloat().reduced(8.0f);
     const float d = juce::jmin(a.getHeight(), a.getWidth() * 0.4f);
     const juce::Rectangle<float> disc(a.getX() + 6.0f, a.getCentreY() - d * 0.5f, d, d);
-    g.setColour(juce::Colour(0xff15171a));
+    g.setColour(juce::Colour(0xff08090b));
     g.fillEllipse(disc);
     g.setColour(theme::textDim.withAlpha(0.3f));
     for (float r = 0.35f; r < 1.0f; r += 0.16f) g.drawEllipse(disc.withSizeKeepingCentre(d * r, d * r), 1.0f);

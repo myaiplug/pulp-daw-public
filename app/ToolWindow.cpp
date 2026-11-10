@@ -2,11 +2,13 @@
 
 PulpLookAndFeel::PulpLookAndFeel() {
     using namespace juce;
+    setDefaultSansSerifTypeface(theme::face(0));
+    setColour(ResizableWindow::backgroundColourId, theme::panel);
     setColour(PopupMenu::backgroundColourId, theme::panel);
     setColour(PopupMenu::textColourId, theme::text);
     setColour(PopupMenu::headerTextColourId, theme::accent);
-    setColour(PopupMenu::highlightedBackgroundColourId, theme::accent.withAlpha(0.85f));
-    setColour(PopupMenu::highlightedTextColourId, Colours::black);
+    setColour(PopupMenu::highlightedBackgroundColourId, theme::accent.withAlpha(0.18f));
+    setColour(PopupMenu::highlightedTextColourId, theme::accent.brighter(0.3f));
     setColour(AlertWindow::backgroundColourId, theme::panel);
     setColour(AlertWindow::textColourId, theme::text);
     setColour(AlertWindow::outlineColourId, theme::line);
@@ -39,9 +41,9 @@ void PulpLookAndFeel::drawScrollbar(juce::Graphics& g, juce::ScrollBar&, int x, 
     g.setColour(theme::panelLo);
     g.fillRect(x, y, w, h);
     if (thumbSize <= 0) return;
-    auto r = vertical ? juce::Rectangle<int>(x + 2, thumbStart, w - 4, thumbSize) : juce::Rectangle<int>(thumbStart, y + 2, thumbSize, h - 4);
-    g.setColour(theme::panelHi.brighter(down ? 0.35f : (over ? 0.25f : 0.12f)));
-    g.fillRoundedRectangle(r.toFloat(), 3.0f);
+    auto r = vertical ? juce::Rectangle<int>(x + 3, thumbStart + 1, w - 6, thumbSize - 2) : juce::Rectangle<int>(thumbStart + 1, y + 3, thumbSize - 2, h - 6);
+    g.setColour(down ? theme::accent.withAlpha(0.7f) : theme::text.withAlpha(over ? 0.28f : 0.14f));
+    g.fillRoundedRectangle(r.toFloat(), juce::jmin(r.getWidth(), r.getHeight()) * 0.5f);
 }
 
 ToolWindow::ToolWindow(const juce::String& title, juce::Component* content, bool ownsContent)
@@ -71,22 +73,33 @@ void ToolWindow::paint(juce::Graphics& g) {
     g.fillAll(theme::panel);
     auto bar = getLocalBounds().removeFromTop(kTitle);
     const bool front = hasKeyboardFocus(true);
-    g.setColour(front ? theme::panelHi.brighter(0.06f) : theme::panelHi);
+    const auto top = front ? theme::panelHi.brighter(0.05f) : theme::panelHi;
+    g.setGradientFill(juce::ColourGradient(top, 0.0f, 0.0f, theme::panel, 0.0f, (float)kTitle, false));
     g.fillRect(bar);
-    g.setColour(front ? theme::accent : theme::textDim);
-    g.fillRect(bar.removeFromLeft(4));
-    g.setColour(theme::text);
-    g.setFont(theme::font(13.0f, true));
-    g.drawText(title_, bar.reduced(6, 0).withTrimmedRight(44), juce::Justification::centredLeft, true);
+    g.setColour(theme::sheen);
+    g.drawHorizontalLine(1, 1.0f, (float)getWidth() - 1.0f);
+    // a gold hairline under the title of the window that has the focus
+    g.setColour(front ? theme::accent.withAlpha(0.55f) : theme::line);
+    g.drawHorizontalLine(kTitle - 1, 0.0f, (float)getWidth());
+    // status jewel
+    auto jewel = juce::Rectangle<float>(6.0f, 6.0f).withCentre({11.0f, kTitle * 0.5f});
+    if (front) { g.setColour(theme::accent.withAlpha(0.25f)); g.fillEllipse(jewel.expanded(3.0f)); }
+    g.setColour(front ? theme::accent : theme::textDim.withAlpha(0.6f));
+    g.fillEllipse(jewel);
+    g.setColour(front ? theme::text : theme::textDim);
+    g.setFont(theme::font(12.5f, true));
+    g.drawText(title_, bar.withTrimmedLeft(22).withTrimmedRight(46), juce::Justification::centredLeft, true);
     // detach / dock and close boxes
     auto cb = closeBox().toFloat(), db = detachBox().toFloat();
+    if (hover_ == 1) { g.setColour(theme::bad.withAlpha(0.18f)); g.fillRoundedRectangle(cb, 4.0f); }
+    if (hover_ == 2) { g.setColour(theme::accent.withAlpha(0.14f)); g.fillRoundedRectangle(db, 4.0f); }
     g.setColour(hover_ == 1 ? theme::bad : theme::textDim);
-    g.drawLine(cb.getX() + 4, cb.getY() + 4, cb.getRight() - 4, cb.getBottom() - 4, 1.6f);
-    g.drawLine(cb.getRight() - 4, cb.getY() + 4, cb.getX() + 4, cb.getBottom() - 4, 1.6f);
+    g.drawLine(cb.getX() + 4.5f, cb.getY() + 4.5f, cb.getRight() - 4.5f, cb.getBottom() - 4.5f, 1.4f);
+    g.drawLine(cb.getRight() - 4.5f, cb.getY() + 4.5f, cb.getX() + 4.5f, cb.getBottom() - 4.5f, 1.4f);
     g.setColour(hover_ == 2 ? theme::accent : theme::textDim);
-    if (isDetached()) g.drawRect(db.reduced(3.5f), 1.4f);
-    else { g.drawRect(db.reduced(3.5f).translated(1.5f, -1.5f), 1.2f); g.drawRect(db.reduced(3.5f).translated(-1.5f, 1.5f), 1.2f); }
-    g.setColour(theme::line);
+    if (isDetached()) g.drawRoundedRectangle(db.reduced(3.5f), 1.5f, 1.3f);
+    else { g.drawRoundedRectangle(db.reduced(4.0f).translated(1.5f, -1.5f), 1.5f, 1.1f); g.drawRoundedRectangle(db.reduced(4.0f).translated(-1.5f, 1.5f), 1.5f, 1.1f); }
+    g.setColour(front ? theme::accent.withAlpha(0.22f) : juce::Colours::black.withAlpha(0.7f));
     g.drawRect(getLocalBounds(), 1);
 }
 

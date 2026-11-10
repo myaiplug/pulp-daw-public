@@ -74,6 +74,11 @@ if(PULP_BUILD_APP)
     NEEDS_CURL FALSE
     NEEDS_WEB_BROWSER FALSE)
   target_sources(pulp_app PRIVATE ${PULP_APP_SRC})
+  # NoDAW design: bundled typefaces (SIL Open Font License, see app/fonts/*-OFL.txt)
+  juce_add_binary_data(pulp_fonts SOURCES
+    "${CMAKE_SOURCE_DIR}/app/fonts/Inter-Regular.ttf"
+    "${CMAKE_SOURCE_DIR}/app/fonts/Inter-SemiBold.ttf"
+    "${CMAKE_SOURCE_DIR}/app/fonts/JetBrainsMono-Medium.ttf")
   target_include_directories(pulp_app PRIVATE "${CMAKE_SOURCE_DIR}/app")
   target_compile_definitions(pulp_app PRIVATE
     JUCE_WEB_BROWSER=0
@@ -89,6 +94,7 @@ if(PULP_BUILD_APP)
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:pulp_app,JUCE_VERSION>")
   target_link_libraries(pulp_app PRIVATE
     pulp_engine
+    pulp_fonts
     juce::juce_gui_basics
     juce::juce_audio_devices
     juce::juce_audio_processors

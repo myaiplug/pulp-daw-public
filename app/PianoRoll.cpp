@@ -195,11 +195,11 @@ void PianoRoll::paintGrid(juce::Graphics& g) {
     for (int k = botKey; k <= topKey; ++k) {
         const float y = yOfKey(k);
         const bool black = KeyboardStrip::isBlack(k);
-        juce::Colour c = black ? juce::Colour(0xff25292d) : juce::Colour(0xff2d3237);
+        juce::Colour c = black ? juce::Colour(0xff101216) : juce::Colour(0xff15171c);
         if (useScale) {
-            if (!tools::inScale(k, scaleRoot, sc)) c = juce::Colour(0xff1d2023);
-            else if (((k - scaleRoot) % 12 + 12) % 12 == 0) c = juce::Colour(0xff35404a);
-            else c = juce::Colour(0xff2f353b);
+            if (!tools::inScale(k, scaleRoot, sc)) c = juce::Colour(0xff0b0c0f);
+            else if (((k - scaleRoot) % 12 + 12) % 12 == 0) c = juce::Colour(0xff25211a);
+            else c = juce::Colour(0xff181a1f);
         }
         g.setColour(c);
         g.fillRect((float)a.getX(), y, (float)a.getWidth(), (float)keyH_);
@@ -236,7 +236,7 @@ void PianoRoll::paintGrid(juce::Graphics& g) {
     for (int t = juce::jmax(0, t0); t <= t1; t += fine) {
         const float x = xOfTick(t);
         const bool isBar = t % bar == 0, isBeat = t % beat == 0;
-        g.setColour(isBar ? juce::Colour(0xff0e1012) : (isBeat ? juce::Colour(0xff191c1f) : juce::Colour(0xff22262a)));
+        g.setColour(isBar ? juce::Colour(0xff040506) : (isBeat ? juce::Colour(0xff08090b) : juce::Colour(0xff0d0e11)));
         g.drawVerticalLine((int)x, (float)a.getY(), (float)a.getBottom());
     }
     // pattern end and loop region
@@ -278,7 +278,7 @@ void PianoRoll::paintNotes(juce::Graphics& g) {
                 const auto r = noteRect(n);
                 if (!r.intersects(clip)) continue;
                 juce::Colour c = theme::palette(n.color + 5).brighter(0.15f + 0.45f * n.velocity);
-                if (n.muted) c = juce::Colour(0xff596068);
+                if (n.muted) c = juce::Colour(0xff3d4148);
                 auto body = r.reduced(0.0f, 0.5f);
                 g.setColour(n.selected ? c.brighter(0.5f) : c);
                 g.fillRoundedRectangle(body, 2.0f);
@@ -324,11 +324,11 @@ void PianoRoll::paintKeys(juce::Graphics& g) {
         if (y > (float)a.getBottom() || y + (float)keyH_ < (float)a.getY()) continue;
         const bool black = KeyboardStrip::isBlack(k);
         juce::Rectangle<float> r((float)a.getX(), y, (float)a.getWidth() - 1.0f, (float)keyH_ - 1.0f);
-        g.setColour(k == playingKey_ ? theme::accent : (black ? juce::Colour(0xff1c1f22) : juce::Colour(0xffd4d8dc)));
+        g.setColour(k == playingKey_ ? theme::accent : (black ? juce::Colour(0xff0d0e11) : juce::Colour(0xffe9e4da)));
         g.fillRect(black ? r.withTrimmedRight(18.0f) : r);
-        if (black) { g.setColour(juce::Colour(0xffd4d8dc)); g.fillRect(r.withLeft(r.getRight() - 18.0f)); }
+        if (black) { g.setColour(juce::Colour(0xffe9e4da)); g.fillRect(r.withLeft(r.getRight() - 18.0f)); }
         if (k % 12 == 0 || keyH_ >= 13) {
-            g.setColour(black ? juce::Colour(0xff9aa0a6) : juce::Colour(0xff40464c));
+            g.setColour(black ? juce::Colour(0xff9aa0a6) : juce::Colour(0xff2a2d33));
             g.setFont(theme::font(juce::jmin(10.0f, (float)keyH_ - 2.0f), k % 12 == 0));
             if (k % 12 == 0 || !black) g.drawText(tools::keyName(k), r.withTrimmedRight(3.0f), juce::Justification::centredRight, false);
         }
