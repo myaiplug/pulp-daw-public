@@ -1,0 +1,30 @@
+name: NoDAW design build
+on:
+  push:
+    branches: ["nodaw/**"]
+  workflow_dispatch:
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build PULP (app only)
+        shell: cmd
+        run: call build.bat app
+      - name: Screenshots
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force out/shots | Out-Null
+          $p = Start-Process -FilePath dist/PULP/PULP.exe -ArgumentList '--no-audio','--size','1600x900','--script','scripts/nodaw_shots.txt','--log','out/shots/shots.log','--data-dir','out/shotdata' -PassThru
+          if (-not $p.WaitForExit(240000)) { $p.Kill(); Write-Host "timed out" }
+          Get-ChildItem out/shots
+          if (Test-Path out/shots/shots.log) { Get-Content out/shots/shots.log }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shots
+          path: out/shots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PULP-windows
+          path: dist/PULP

@@ -1,0 +1,21 @@
+# NoDAW design review: screenshots of the main views with the demo song.
+wait 800
+new demo
+show playlist
+show mixer
+wait 500
+shot main ../out/shots/01-playlist-mixer.png
+hide mixer
+show rack
+wait 300
+shot main ../out/shots/02-rack.png
+show piano
+wait 300
+shot main ../out/shots/03-piano.png
+hide piano
+hide rack
+show mixer
+move mixer 40 60 1400 700
+wait 300
+shot main ../out/shots/04-mixer.png
+quit
